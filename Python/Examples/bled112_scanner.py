@@ -401,7 +401,14 @@ def bgapi_parse(b):
                                 # OTHER AD PACKET TYPES NOT HANDLED YET
 
                                 if this_field[0] == 0xFF: # manufactuerer specific data
-                                    ad_manufacturer.append(this_field[1:])
+                                    # LOL HAX
+                                    it = iter(this_field[1:])
+                                    ad_manufacturer = [((next(it) << 8) | x) for x in it]
+                                    #ad_manufacturer += [item for sublist in l for item in sublist]
+                                    #ad_manufacturer = this_field[1:]
+
+                    # Print out just manufacturer data
+                    data_data = [(x - 65536) if (x & 0x8000) else x for x in ad_manufacturer]
 
                     if len(filter_mac) > 0:
                         match = 0
@@ -441,6 +448,7 @@ def bgapi_parse(b):
                                 disp_list.append("%s" % ''.join(['%02X' % b for b in data_data]))
 
                         print ' '.join(disp_list)
+                        print data_data
 
         bgapi_rx_buffer = []
 
